@@ -66,9 +66,16 @@ def run(
         trainer.test(model, datamodule=data_module)
 
 
+def debugger(cfg):
+    if cfg.debug:
+        import pydevd_pycharm
+        pydevd_pycharm.settrace(cfg.ip, port=cfg.port, stdoutToServer=True, stderrToServer=True)
+
+
 def main(cfg: DictConfig) -> None:
     rank_zero_info(OmegaConf.to_yaml(cfg))
     instantiator = HydraInstantiator()
+    debugger(cfg)
     logger = instantiator.logger(cfg)
     run(
         instantiator,

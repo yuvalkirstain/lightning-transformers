@@ -7,6 +7,9 @@ defaults: # loads default configs
   - generate: default
 
 experiment_name: ${now:%Y-%m-%d}_${now:%H-%M-%S}
-log: False
+log: True
+debug: null
+ip: null
+port: null
 ignore_warnings: True # todo: check warnings before release
 seed: 42
