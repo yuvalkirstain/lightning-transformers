@@ -75,6 +75,7 @@ class HFDataModule(TokenizerDataModule):
         return dataset
 
     def _select_samples(self, dataset: Union[Dataset, DatasetDict]) -> Union[Dataset, DatasetDict]:
+        dataset.shuffle(self.cfg.seed)
         samples = (
             ("train", self.cfg.limit_train_samples),
             ("validation", self.cfg.limit_val_samples),

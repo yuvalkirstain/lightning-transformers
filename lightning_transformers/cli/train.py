@@ -15,7 +15,7 @@ from typing import Any, Optional
 
 import hydra
 from omegaconf import DictConfig, OmegaConf
-from pytorch_lightning import LightningDataModule
+from pytorch_lightning import LightningDataModule, seed_everything
 from pytorch_lightning.utilities.distributed import rank_zero_info
 
 from lightning_transformers.core import TaskTransformer, TransformerDataModule
@@ -34,7 +34,11 @@ def run(
     trainer: TrainerConfig = TrainerConfig(),
     tokenizer: Optional[HFTokenizerConfig] = None,
     logger: Optional[Any] = None,
+    seed: int = None
 ) -> None:
+    if seed:
+        seed_everything(seed)
+
     if ignore_warnings:
         set_ignore_warnings()
 
@@ -75,6 +79,7 @@ def main(cfg: DictConfig) -> None:
         task=cfg.get("task"),
         trainer=cfg.get("trainer"),
         logger=logger,
+        seed=cfg.get("seed")
     )
 
 

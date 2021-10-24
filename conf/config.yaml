@@ -8,3 +8,4 @@ defaults: # loads default configs
 experiment_name: ${now:%Y-%m-%d}_${now:%H-%M-%S}
 log: False
 ignore_warnings: True # todo: check warnings before release
+seed: 42

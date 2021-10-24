@@ -13,6 +13,7 @@ class HFTransformerDataConfig(TransformerDataConfig):
     dataset_config_name: Optional[str] = None
     train_val_split: Optional[int] = None
     train_file: Optional[str] = None
+    seed: int = None
     test_file: Optional[str] = None
     validation_file: Optional[str] = None
     padding: Union[str, bool] = "max_length"
