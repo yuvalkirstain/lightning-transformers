@@ -4,6 +4,7 @@ defaults: # loads default configs
   - scheduler: linear_schedule_with_warmup
   - training: default
   - trainer: default
+  - generate: default
 
 experiment_name: ${now:%Y-%m-%d}_${now:%H-%M-%S}
 log: False

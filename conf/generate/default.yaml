@@ -1,0 +1,27 @@
+generation_kwargs:
+  max_length: 50
+  max_new_tokens: 32
+  min_length: 2
+  do_sample: false
+  early_stopping: false
+  num_beams: 4
+  temperature: 1.0
+  top_k: 50
+  top_p: 1.0
+  repetition_penalty: 1.0
+  length_penalty: 1.0
+  no_repeat_ngram_size: 0
+  encoder_no_repeat_ngram_size: 0
+  num_return_sequences: 1
+  use_cache: true
+  num_beam_groups: 1
+  diversity_penalty: 0.0
+  output_attentions: false
+
+pipeline_kwargs:
+  device: -1
+
+batch_size: 32
+split: validation
+out_path: generations.jsonl
+source_col: question
