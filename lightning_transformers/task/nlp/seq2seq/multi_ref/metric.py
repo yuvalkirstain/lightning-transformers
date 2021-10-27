@@ -4,7 +4,7 @@ from collections import Counter
 from typing import List
 
 import torch
-from torchmetrics import Metric
+from torchmetrics import Metric, BLEUScore
 
 
 def normalize_answer(s):
@@ -73,3 +73,20 @@ class QAMetric(Metric):
 
     def compute(self):
         return {"exact": mean(self.exact), "f1": mean(self.f1)}
+
+
+class SimplificationMetric(Metric):
+    def __init__(self, n_gram: int = 4, smooth: bool = True):
+        super().__init__()
+        self.bleu = BLEUScore(n_gram, smooth)
+
+    def update(self, predictions: List[str], references: List[List[str]]):
+        tgt_tokens = tuple([tuple(tuple(reference.split()) for example_references in references for reference in example_references)])
+        pred_tokens = tuple(tuple(prediction.split()) for prediction in predictions)
+        self.bleu.update(tgt_tokens, pred_tokens)
+        result = {"bleu": self.bleu(tgt_tokens, pred_tokens).item()}
+        return result
+
+    def compute(self):
+        results = self.bleu.compute()
+        return results

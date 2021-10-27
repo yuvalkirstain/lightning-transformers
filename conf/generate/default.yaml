@@ -24,4 +24,4 @@ pipeline_kwargs:
 batch_size: 32
 split: validation
 out_path: generations.jsonl
-source_col: question
+source_col: ${dataset.cfg.source_column_name}

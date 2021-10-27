@@ -1,4 +1,5 @@
 run_fit: True
+run_validation_after_fit: True
 run_test_after_fit: True
 run_predict_after_fit: False
 lr: 5e-5

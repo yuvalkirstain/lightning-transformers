@@ -46,6 +46,7 @@ def run(
     instantiator: Instantiator,
     ignore_warnings: bool = True,
     run_fit: bool = True,
+    run_validation_after_fit: bool = True,
     run_test_after_fit: bool = True,
     run_predict_after_fit: bool = False,
     dataset: TransformerDataConfig = TransformerDataConfig(),
@@ -87,8 +88,15 @@ def run(
     if run_fit:
         trainer.fit(model, datamodule=data_module)
 
+    if run_validation_after_fit:
+        results = trainer.validate(model, datamodule=data_module)
+        print("Val Results!!!")
+        print(results)
+
     if run_test_after_fit:
-        trainer.test(model, datamodule=data_module)
+        results = trainer.test(model, datamodule=data_module)
+        print("Results!!!")
+        print(results)
 
     if run_predict_after_fit:
         # TODO this is ugly, make it nicer
@@ -119,6 +127,7 @@ def main(cfg: DictConfig) -> None:
         instantiator,
         ignore_warnings=cfg.get("ignore_warnings"),
         run_fit=cfg.get("training").get("run_fit"),
+        run_validation_after_fit=cfg.get("training").get("run_validation_after_fit"),
         run_test_after_fit=cfg.get("training").get("run_test_after_fit"),
         run_predict_after_fit=cfg.get("training").get("run_predict_after_fit"),
         dataset=cfg.get("dataset"),

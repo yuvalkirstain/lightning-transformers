@@ -11,13 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from torchmetrics.text.rouge import ROUGEScore
+from typing import List, Any
 
+import torch
+from datasets import load_metric
 from lightning_transformers.core.nlp.seq2seq import Seq2SeqTransformer
-from lightning_transformers.task.nlp.summarization.config import SummarizationConfig
+from lightning_transformers.task.nlp.seq2seq.multi_ref.config import MultiRefConfig
+from lightning_transformers.task.nlp.seq2seq.multi_ref.metric import QAMetric
 
 
-class SummarizationTransformer(Seq2SeqTransformer):
+class MultiRefTransformer(Seq2SeqTransformer):
     """Defines ``LightningModule`` for the Summarization Task.
 
     Args:
@@ -31,20 +34,31 @@ class SummarizationTransformer(Seq2SeqTransformer):
         self,
         *args,
         downstream_model_type: str = "transformers.AutoModelForSeq2SeqLM",
-        cfg: SummarizationConfig = SummarizationConfig(),
+        cfg: MultiRefConfig = MultiRefConfig(),
         **kwargs
     ) -> None:
         super().__init__(downstream_model_type, *args, cfg=cfg, **kwargs)
-        self.rouge = None
+        self.metric = None
+
+    def common_step(self, prefix: str, batch: Any) -> torch.Tensor:
+        example_ids = batch.pop(self.trainer.datamodule.idx_column_name)
+        outputs = self.model(**batch)
+        loss, logits = outputs[:2]
+        if self.cfg.compute_generate_metrics:
+            batch[self.trainer.datamodule.idx_column_name] = example_ids
+            self.compute_generate_metrics(batch, prefix)
+        return loss
 
     def compute_generate_metrics(self, batch, prefix):
-        tgt_lns = self.tokenize_labels(batch["labels"])
+        example_ids = batch.pop(self.trainer.datamodule.idx_column_name)
+        examples = self.trainer.datamodule.ds["validation"].select(example_ids)  # TODO should also support test
+        tgt_lns = examples[self.trainer.datamodule.references_column_name]
         pred_lns = self.generate(batch["input_ids"], batch["attention_mask"])
-        result = self.rouge(pred_lns, tgt_lns)
+        result = self.metric.update(predictions=pred_lns, references=tgt_lns)
         self.log_dict(result, on_step=False, on_epoch=True)
 
     def configure_metrics(self, stage: str):
-        self.rouge = ROUGEScore(use_stemmer=self.cfg.use_stemmer)
+        raise NotImplementedError
 
     @property
     def hf_pipeline_task(self) -> str:

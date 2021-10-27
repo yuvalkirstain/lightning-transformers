@@ -11,12 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Tuple
+from lightning_transformers.task.nlp.seq2seq.multi_ref import MultiRefDataModule
+from lightning_transformers.task.nlp.seq2seq.multi_ref.metric import QAMetric
+from lightning_transformers.task.nlp.seq2seq.multi_ref.model import MultiRefTransformer
 
-from lightning_transformers.task.nlp.summarization import SummarizationDataModule
+
+class NQOpenDataModule(MultiRefDataModule):
+    pass
 
 
-class XsumSummarizationDataModule(SummarizationDataModule):
-    @property
-    def source_target_column_names(self) -> Tuple[str, str]:
-        return "document", "summary"
+class QATransformer(MultiRefTransformer):
+    def configure_metrics(self, stage: str):
+        self.metric = QAMetric()

@@ -1,0 +1,15 @@
+# @package dataset
+defaults:
+  - nlp/default
+_target_: lightning_transformers.task.nlp.seq2seq.multi_ref.AssetDataModule
+cfg:
+  dataset_name: asset
+  dataset_config_name: simplification
+  source_column_name: original
+  target_column_name: target
+  references_column_name: simplifications
+  max_source_length: 128
+  max_target_length: 32
+  idx_column_name: idx
+  train_val_split: 0.5
+

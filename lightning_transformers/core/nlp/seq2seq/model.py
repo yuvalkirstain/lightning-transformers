@@ -13,9 +13,11 @@ class Seq2SeqTransformer(HFTransformer):
         self.cfg = cfg
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
+        batch.pop(self.trainer.datamodule.idx_column_name)
         outputs = self.model(**batch)
         loss = outputs[0]
-        self.log("train_loss", loss)
+        self.log("train_loss", loss, sync_dist=True)
+        self.log("train_batch_size", outputs[1].size(0), sync_dist=True)
         return loss
 
     def common_step(self, prefix: str, batch: Any) -> torch.Tensor:

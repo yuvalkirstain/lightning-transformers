@@ -11,10 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from lightning_transformers.core.nlp.seq2seq import Seq2SeqDataModule
+from dataclasses import dataclass
+
+from lightning_transformers.core.nlp.seq2seq import HFSeq2SeqConfig, Seq2SeqDataConfig
 
 
-class SummarizationDataModule(Seq2SeqDataModule):
-    """Defines the ``LightningDataModule`` for Summarization Datasets."""
+@dataclass
+class MultiRefConfig(HFSeq2SeqConfig):
+    use_stemmer: bool = True
 
-    pass
+
+@dataclass
+class MultiRefDataConfig(Seq2SeqDataConfig):
+    source_column_name: str = ""
+    target_column_name: str = ""
+    references_column_name: str = ""
+    idx_column_name: str = ""

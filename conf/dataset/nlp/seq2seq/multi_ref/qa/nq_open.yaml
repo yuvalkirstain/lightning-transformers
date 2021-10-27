@@ -1,0 +1,12 @@
+# @package dataset
+defaults:
+  - nlp/default
+_target_: lightning_transformers.task.nlp.seq2seq.multi_ref.MultiRefDataModule
+cfg:
+  dataset_name: nq_open
+  source_column_name: question
+  target_column_name: target
+  references_column_name: answer
+  max_source_length: 128
+  max_target_length: 32
+  idx_column_name: idx

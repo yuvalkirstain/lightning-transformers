@@ -5,7 +5,7 @@ import pytest
 
 from lightning_transformers.core.nlp import HFBackboneConfig
 from lightning_transformers.core.nlp.seq2seq import Seq2SeqDataConfig
-from lightning_transformers.task.nlp.seq2seq.qa import QADataModule, QATransformer
+from lightning_transformers.task.nlp.seq2seq.qa import MultiRefDataModule, MultiRefTransformer
 from lightning_transformers.task.nlp.seq2seq.qa.config import QAConfig
 
 
@@ -29,13 +29,13 @@ def test_smoke_predict_e2e(script_runner):
 
 
 def test_model_has_correct_cfg():
-    model = QATransformer(HFBackboneConfig(pretrained_model_name_or_path="t5-base"))
+    model = MultiRefTransformer(HFBackboneConfig(pretrained_model_name_or_path="t5-base"))
     assert model.hparams.downstream_model_type == "transformers.AutoModelForSeq2SeqLM"
     assert type(model.cfg) is QAConfig
 
 
 def test_datamodule_has_correct_cfg():
     tokenizer = MagicMock()
-    dm = QADataModule(tokenizer)
+    dm = MultiRefDataModule(tokenizer)
     assert type(dm.cfg) is Seq2SeqDataConfig
     assert dm.tokenizer is tokenizer

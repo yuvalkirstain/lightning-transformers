@@ -16,3 +16,6 @@ class Seq2SeqDataConfig(HFTransformerDataConfig):
     max_target_length: int = 128
     max_source_length: int = 1024
     padding: str = "longest"
+    val_target_max_length: Optional[int] = 128
+    num_beams: Optional[int] = 1
+    compute_generate_metrics: bool = True
