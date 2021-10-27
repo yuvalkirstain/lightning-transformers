@@ -1,6 +1,6 @@
 defaults: # loads default configs
   - task: default
-  - optimizer: adamw
+  - optimizer: adafactor
   - scheduler: linear_schedule_with_warmup
   - training: default
   - trainer: default

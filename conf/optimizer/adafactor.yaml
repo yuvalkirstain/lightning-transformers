@@ -1,0 +1,6 @@
+_target_: transformers.optimization.Adafactor
+lr: ${training.lr}
+scale_parameter: False
+relative_step: False
+warmup_init: False
+weight_decay: 0.001
