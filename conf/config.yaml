@@ -5,6 +5,8 @@ defaults: # loads default configs
   - training: default
   - trainer: default
   - generate: default
+  - override hydra/job_logging: colorlog
+  - override hydra/hydra_logging: colorlog
 
 experiment_name: ${now:%Y-%m-%d}_${now:%H-%M-%S}
 log: True

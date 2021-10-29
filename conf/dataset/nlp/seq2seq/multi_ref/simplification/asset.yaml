@@ -11,5 +11,5 @@ cfg:
   max_source_length: 128
   max_target_length: 32
   idx_column_name: idx
-  train_val_split: 0.5
+  train_val_split: null
 

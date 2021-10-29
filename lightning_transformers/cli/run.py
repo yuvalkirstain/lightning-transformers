@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 from functools import partial
 from typing import Any, Optional
 
@@ -118,11 +119,19 @@ def debugger(cfg):
         pydevd_pycharm.settrace(cfg.ip, port=cfg.port, stdoutToServer=True, stderrToServer=True)
 
 
+def log_config(cfg, logger):
+    # TODO this currently only works with wandb logger...
+    cfg = OmegaConf.to_object(cfg)
+    cfg["working_dir"] = os.getcwd()
+    logger.experiment.config.update(cfg)
+
+
 def main(cfg: DictConfig) -> None:
     rank_zero_info(OmegaConf.to_yaml(cfg))
     instantiator = HydraInstantiator()
     debugger(cfg)
     logger = instantiator.logger(cfg)
+    log_config(cfg, logger)
     run(
         instantiator,
         ignore_warnings=cfg.get("ignore_warnings"),
