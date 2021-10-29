@@ -12,3 +12,5 @@ cfg:
   compute_generate_metrics: True
   smooth: true
   n_gram: 4
+  monitor: bleu
+  mode: max
