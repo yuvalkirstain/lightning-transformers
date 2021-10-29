@@ -49,9 +49,18 @@ class MultiRefTransformer(Seq2SeqTransformer):
             self.compute_generate_metrics(batch, prefix)
         return loss
 
+    @staticmethod
+    def get_split_name_by_prefix(prefix):
+        if prefix == "val":
+            return "validation"
+        elif prefix == "test":
+            return "test"
+        raise ValueError
+
     def compute_generate_metrics(self, batch, prefix):
         example_ids = batch.pop(self.trainer.datamodule.idx_column_name)
-        examples = self.trainer.datamodule.ds["validation"].select(example_ids)  # TODO should also support test
+        split_name = self.get_split_name_by_prefix(prefix)
+        examples = self.trainer.datamodule.ds[split_name].select(example_ids)
         tgt_lns = examples[self.trainer.datamodule.references_column_name]
         pred_lns = self.generate(batch["input_ids"], batch["attention_mask"])
         result = self.metric.update(predictions=pred_lns, references=tgt_lns)
