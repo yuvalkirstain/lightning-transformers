@@ -1,6 +1,6 @@
 defaults:
   - logger: wandb
-  - callbacks: learning_rate_monitor
+  - callbacks: default
 _target_: pytorch_lightning.Trainer
 checkpoint_callback: True
 default_root_dir: null

@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, Optional, Union
 import hydra
 import pytorch_lightning as pl
 import torch
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 
 from lightning_transformers.core import TransformerDataModule
 from lightning_transformers.core.data import TokenizerDataModule
@@ -108,6 +108,7 @@ class HydraInstantiator(Instantiator):
             return self.instantiate(cfg.trainer.logger)
 
     def trainer(self, cfg: DictConfig, **kwargs) -> pl.Trainer:
+        cfg.callbacks = list(OmegaConf.to_object(cfg.callbacks).values())
         return self.instantiate(cfg, **kwargs)
 
     def instantiate(self, *args, **kwargs):
