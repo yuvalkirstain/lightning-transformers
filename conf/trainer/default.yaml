@@ -38,7 +38,6 @@ resume_from_checkpoint: null
 profiler: null
 benchmark: False
 deterministic: False
-reload_dataloaders_every_epoch: False
 auto_lr_find: False
 replace_sampler_ddp: True
 terminate_on_nan: False
@@ -46,5 +45,4 @@ auto_scale_batch_size: False
 prepare_data_per_node: True
 plugins: null
 amp_backend: 'native'
-amp_level: 'O2'
 move_metrics_to_cpu: False
