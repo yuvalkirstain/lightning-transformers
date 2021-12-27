@@ -62,10 +62,10 @@ class QAMetric(Metric):
         self.add_state("exact", [])
         self.add_state("f1", [])
 
-    def update(self, predictions: List[str], references: List[List[str]]):
-        exact = [metric_max_over_ground_truths(exact_match_score, prediction, reference)
+    def update(self, predictions: List[str], references: List[str]):
+        exact = [exact_match_score(prediction, reference)
                  for prediction, reference in zip(predictions, references)]
-        f1 = [metric_max_over_ground_truths(f1_score, prediction, reference)
+        f1 = [f1_score(prediction, reference)
               for prediction, reference in zip(predictions, references)]
         self.exact += torch.tensor(exact)
         self.f1 += torch.tensor(f1)
@@ -82,23 +82,6 @@ class SimplificationMetric(Metric):
 
     def update(self, predictions: List[str], references: List[List[str]]):
         tgt_tokens = tuple([tuple(tuple(reference.split()) for example_references in references for reference in example_references)])
-        pred_tokens = tuple(tuple(prediction.split()) for prediction in predictions)
-        self.bleu.update(tgt_tokens, pred_tokens)
-        result = {"bleu": self.bleu(tgt_tokens, pred_tokens).item()}
-        return result
-
-    def compute(self):
-        results = self.bleu.compute()
-        return results
-
-
-class QualityMetric(Metric):
-    def __init__(self, n_gram: int = 4, smooth: bool = True):
-        super().__init__()
-        self.bleu = BLEUScore(n_gram, smooth)
-
-    def update(self, predictions: List[str], references: List[List[str]]):
-        tgt_tokens = tuple(tuple(reference.split()) for reference in references)
         pred_tokens = tuple(tuple(prediction.split()) for prediction in predictions)
         self.bleu.update(tgt_tokens, pred_tokens)
         result = {"bleu": self.bleu(tgt_tokens, pred_tokens).item()}

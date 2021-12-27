@@ -13,11 +13,12 @@ class Seq2SeqTransformer(HFTransformer):
         self.cfg = cfg
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
-        batch.pop(self.trainer.datamodule.idx_column_name)
         outputs = self.model(**batch)
         loss = outputs[0]
         self.log("train_loss", loss, sync_dist=True)
-        self.log("train_batch_size", outputs[1].size(0), sync_dist=True)
+        self.log("train_batch_size", outputs[1].size(0), sync_dist=True, prog_bar=True)
+        for idx, group in enumerate(self.optimizer.param_groups):
+            self.log(f"train_lr_{idx}", group["lr"], sync_dist=True, prog_bar=True)
         return loss
 
     def common_step(self, prefix: str, batch: Any) -> torch.Tensor:
@@ -25,6 +26,7 @@ class Seq2SeqTransformer(HFTransformer):
         loss, logits = outputs[:2]
         if self.cfg.compute_generate_metrics:
             self.compute_generate_metrics(batch, prefix)
+        self.log(f"{prefix}_loss", loss, sync_dist=True, prog_bar=True)
         return loss
 
     def validation_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0) -> torch.Tensor:

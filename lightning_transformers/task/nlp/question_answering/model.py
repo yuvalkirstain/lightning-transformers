@@ -32,9 +32,10 @@ class QuestionAnsweringTransformer(HFTransformer):
     """
 
     def __init__(
-        self, *args, downstream_model_type: str = "transformers.AutoModelForQuestionAnswering", **kwargs
+        self, *args, downstream_model_type: str = "transformers.AutoModelForQuestionAnswering", cfg, **kwargs
     ) -> None:
         super().__init__(downstream_model_type, *args, **kwargs)
+        self.cfg = cfg
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
         outputs = self.model(**batch)

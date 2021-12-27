@@ -20,7 +20,7 @@ from lightning_transformers.task.nlp.seq2seq.multi_ref.config import MultiRefCon
 from lightning_transformers.task.nlp.seq2seq.multi_ref.metric import QAMetric
 
 
-class MultiRefTransformer(Seq2SeqTransformer):
+class SingleRefTransformer(Seq2SeqTransformer):
     """Defines ``LightningModule`` for the Summarization Task.
 
     Args:
@@ -40,37 +40,16 @@ class MultiRefTransformer(Seq2SeqTransformer):
         super().__init__(downstream_model_type, *args, cfg=cfg, **kwargs)
         self.metric = None
 
-    def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
-        batch.pop(self.trainer.datamodule.idx_column_name)
-        outputs = self.model(**batch)
-        loss = outputs[0]
-        self.log("train_loss", loss, sync_dist=True)
-        self.log("train_batch_size", outputs[1].size(0), sync_dist=True)
-        return loss
-
     def common_step(self, prefix: str, batch: Any) -> torch.Tensor:
-        example_ids = batch.pop(self.trainer.datamodule.idx_column_name)
         outputs = self.model(**batch)
         loss, logits = outputs[:2]
         if self.cfg.compute_generate_metrics:
-            batch[self.trainer.datamodule.idx_column_name] = example_ids
             self.compute_generate_metrics(batch, prefix)
         return loss
 
-    @staticmethod
-    def get_split_name_by_prefix(prefix):
-        if prefix == "val":
-            return "validation"
-        elif prefix == "test":
-            return "test"
-        raise ValueError
-
     def compute_generate_metrics(self, batch, prefix):
-        example_ids = batch.pop(self.trainer.datamodule.idx_column_name)
-        split_name = self.get_split_name_by_prefix(prefix)
-        examples = self.trainer.datamodule.ds[split_name].select(example_ids)
-        tgt_lns = examples[self.trainer.datamodule.references_column_name]
         pred_lns = self.generate(batch["input_ids"], batch["attention_mask"])
+        tgt_lns = self.tokenize_labels(batch["labels"])
         result = self.metric.update(predictions=pred_lns, references=tgt_lns)
         self.log_dict(result, on_step=False, on_epoch=True)
 
