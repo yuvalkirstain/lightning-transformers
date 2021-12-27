@@ -18,7 +18,7 @@ from typing import Any, Optional
 import hydra
 from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import LightningDataModule, seed_everything
-from pytorch_lightning.utilities.distributed import rank_zero_info
+from pytorch_lightning.utilities.distributed import rank_zero_info, rank_zero_only
 
 from lightning_transformers.core import TaskTransformer, TransformerDataModule
 from lightning_transformers.core.config import TaskConfig, TrainerConfig, TransformerDataConfig
@@ -114,11 +114,12 @@ def run(
 
 
 def debugger(cfg):
-    if cfg.debug:
+    if cfg.debug.activate:
         import pydevd_pycharm
-        pydevd_pycharm.settrace(cfg.ip, port=cfg.port, stdoutToServer=True, stderrToServer=True)
+        pydevd_pycharm.settrace(cfg.debug.ip, port=cfg.debug.port, stdoutToServer=True, stderrToServer=True)
 
 
+@rank_zero_only
 def log_config(cfg, logger):
     # TODO this currently only works with wandb logger...
     cfg = OmegaConf.to_object(cfg)
@@ -127,7 +128,6 @@ def log_config(cfg, logger):
 
 
 def main(cfg: DictConfig) -> None:
-    rank_zero_info(OmegaConf.to_yaml(cfg))
     instantiator = HydraInstantiator()
     debugger(cfg)
     logger = instantiator.logger(cfg)

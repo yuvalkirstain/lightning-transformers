@@ -5,13 +5,12 @@ defaults: # loads default configs
   - training: default
   - trainer: default
   - generate: default
+  - debug: default
+  - slurm: default
   - override hydra/job_logging: colorlog
   - override hydra/hydra_logging: colorlog
 
 experiment_name: ${now:%Y-%m-%d}_${now:%H-%M-%S}
 log: True
-debug: null
-ip: null
-port: null
 ignore_warnings: True # todo: check warnings before release
 seed: 42

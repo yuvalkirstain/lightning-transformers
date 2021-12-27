@@ -1,0 +1,14 @@
+# @package dataset
+defaults:
+  - nlp/default
+_target_: lightning_transformers.task.nlp.seq2seq.single_ref.QualityDataModule
+cfg:
+  dataset_name: quality
+  dataset_config_name: simplification
+  source_column_name: input
+  target_column_name: output
+  max_source_length: 256
+  max_target_length: 128
+  idx_column_name: id
+  train_val_split: null
+

@@ -1,0 +1,5 @@
+run_name: null
+time: 10
+n_gpus: ${trainer.gpus}
+constraint: null
+nodelist: null
