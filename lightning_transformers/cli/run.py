@@ -21,7 +21,7 @@ from pytorch_lightning import LightningDataModule, seed_everything
 from pytorch_lightning.utilities.distributed import rank_zero_info, rank_zero_only
 
 from lightning_transformers.core import TaskTransformer, TransformerDataModule
-from lightning_transformers.core.config import TaskConfig, TrainerConfig, TransformerDataConfig
+from lightning_transformers.core.config import TaskConfig, TrainerConfig, TransformerDataConfig, print_config
 from lightning_transformers.core.instantiator import HydraInstantiator, Instantiator
 from lightning_transformers.core.nlp.config import HFTokenizerConfig
 from lightning_transformers.core.utils import set_ignore_warnings
