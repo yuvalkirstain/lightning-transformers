@@ -132,6 +132,7 @@ def main(cfg: DictConfig) -> None:
     debugger(cfg)
     logger = instantiator.logger(cfg)
     log_config(cfg, logger)
+    print_config(cfg)
     run(
         instantiator,
         ignore_warnings=cfg.get("ignore_warnings"),
